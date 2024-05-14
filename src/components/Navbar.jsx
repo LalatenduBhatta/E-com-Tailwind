@@ -6,7 +6,7 @@ function Navbar() {
     const { cartItems } = useCart()
     return (
         <>
-            <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0">
+            <nav class="bg-white border-gray-200 dark:bg-gray-900 sticky top-0 z-10">
                 <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
                     <a href="" class="flex items-center space-x-3 rtl:space-x-reverse">
                         <img src="/logo.webp" class="h-12 rounded-full" alt="Logo" />
