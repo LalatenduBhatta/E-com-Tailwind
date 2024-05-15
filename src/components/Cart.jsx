@@ -3,6 +3,32 @@ import { useCart } from '../context/cartContext'
 
 function Cart() {
     const { cartItems, setCartItems } = useCart()
+    const cartItemDecrement = (id) => {
+        let updatedCart = cartItems.map(item => {
+            if (item.id === id) {
+                if (item.count >= 1) {
+                    item.count = item.count - 1
+                }
+            }
+            return item
+        })
+        setCartItems(updatedCart)
+    }
+    const cartItemIncrement = (id) => {
+        let updatedCart = cartItems.map(item => {
+            if (item.id === id) {
+                if (item.count < item.stock) {
+                    item.count = item.count + 1
+                }
+            }
+            return item
+        })
+        setCartItems(updatedCart)
+    }
+    const removeCartItem = (id) => {
+        let updatedCart = cartItems.filter(item => item.id !== id)
+        setCartItems(updatedCart)
+    }
     return (
         <>
             {cartItems.length <= 0 ?
@@ -44,8 +70,10 @@ function Cart() {
                                                     <div class="flex items-center">
                                                         <button class="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full 
                                                     focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600
-                                                     dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
-                                                            <span class="sr-only">Quantity button</span>
+                                                     dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                                            type="button"
+                                                            onClick={() => cartItemDecrement(item.id)}>
+                                                            <span class="sr-only">- button</span>
                                                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
                                                             </svg>
@@ -57,8 +85,10 @@ function Cart() {
                                                         </div>
                                                         <button class="inline-flex items-center justify-center h-6 w-6 p-1 ms-3 text-sm font-medium text-gray-500 bg-white border
                                                      border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800
-                                                      dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
-                                                            <span class="sr-only">Quantity button</span>
+                                                      dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+                                                            type="button"
+                                                            onClick={() => cartItemIncrement(item.id)}>
+                                                            <span class="sr-only">+ button</span>
                                                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
                                                             </svg>
@@ -66,10 +96,12 @@ function Cart() {
                                                     </div>
                                                 </td>
                                                 <td class="px-6 py-4 font-semibold text-gray-900 dark:text-white">
-                                                    ${item.price}
+                                                    ${item.price * item.count}
                                                 </td>
                                                 <td class="px-6 py-4">
-                                                    <button class="font-medium text-red-600 dark:text-red-500 hover:underline">Remove</button>
+                                                    <button class="font-medium text-red-600 dark:text-red-500 hover:underline"
+                                                        onClick={() => removeCartItem(item.id)}
+                                                    >Remove</button>
                                                 </td>
                                             </tr>)
                                     })
