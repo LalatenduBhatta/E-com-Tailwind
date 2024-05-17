@@ -9,14 +9,14 @@ function Products() {
     const [category, setCategory] = useState([])
     const [brand, setBrand] = useState([])
 
-    const categoryFilter = useRef([])
+    const categoryFilterRef = useRef([])
 
     const categories = filterFunc("category")
     const brands = filterFunc("brand")
 
     function filterFunc(filterItem) {
         if (filterItem == "brand") {
-            return categoryFilter.current.map(product => product[filterItem])?.reduce((acc, category) => {
+            return categoryFilterRef.current.map(product => product[filterItem])?.reduce((acc, category) => {
                 if (!acc.includes(category)) return [...acc, category]
                 else return acc
             }, [])
@@ -67,17 +67,18 @@ function Products() {
         if (category.length > 0) {
             let updatedProducts = products.filter((ele) => category.includes(ele.category))
             setFilterProduct(updatedProducts)
-            categoryFilter.current = updatedProducts
+            categoryFilterRef.current = updatedProducts
         } else {
             setFilterProduct(products)
         }
     }, [category])
     useEffect(() => {
         if (brand.length > 0) {
-            let updatedProducts = categoryFilter.current.filter((ele) => brand.includes(ele.brand))
+            let updatedProducts = categoryFilterRef.current.filter((ele) => brand.includes(ele.brand))
             setFilterProduct(updatedProducts)
-        } else {
-            setFilterProduct(categoryFilter.current)
+        } else if (category.length > 0) {
+            setFilterProduct(categoryFilterRef.current)
+
         }
     }, [brand])
     return (
