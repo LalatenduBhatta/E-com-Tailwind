@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useProducts } from '../context/productContext';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/cartContext';
@@ -7,11 +7,20 @@ function Products() {
     const { cartItems, setCartItems } = useCart()
     const [filterProduct, setFilterProduct] = useState([])
     const [category, setCategory] = useState([])
+    const [brand, setBrand] = useState([])
+
+    const categoryFilter = useRef([])
 
     const categories = filterFunc("category")
     const brands = filterFunc("brand")
 
     function filterFunc(filterItem) {
+        if (filterItem == "brand") {
+            return categoryFilter.current.map(product => product[filterItem])?.reduce((acc, category) => {
+                if (!acc.includes(category)) return [...acc, category]
+                else return acc
+            }, [])
+        }
         return products.map(product => product[filterItem])?.reduce((acc, category) => {
             if (!acc.includes(category)) return [...acc, category]
             else return acc
@@ -42,6 +51,15 @@ function Products() {
             setCategory((prev) => prev.filter(ele => ele != value))
         }
     }
+    const brandHandel = (event) => {
+        let checked = event.target.checked
+        let value = event.target.value
+        if (checked) {
+            setBrand((prev) => [...prev, value])
+        } else {
+            setBrand((prev) => prev.filter(ele => ele != value))
+        }
+    }
     useEffect(() => {
         setFilterProduct(products)
     }, [products])
@@ -49,10 +67,19 @@ function Products() {
         if (category.length > 0) {
             let updatedProducts = products.filter((ele) => category.includes(ele.category))
             setFilterProduct(updatedProducts)
+            categoryFilter.current = updatedProducts
         } else {
             setFilterProduct(products)
         }
     }, [category])
+    useEffect(() => {
+        if (brand.length > 0) {
+            let updatedProducts = categoryFilter.current.filter((ele) => brand.includes(ele.brand))
+            setFilterProduct(updatedProducts)
+        } else {
+            setFilterProduct(categoryFilter.current)
+        }
+    }, [brand])
     return (
         <>
             <div className="bg-slate-100 flex gap-2 w-full dark:bg-slate-600">
@@ -103,7 +130,8 @@ function Products() {
                                             <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
                                                 <input type="checkbox" value={brand} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded 
                                     focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-1
-                                     dark:bg-gray-600 dark:border-gray-500" />
+                                     dark:bg-gray-600 dark:border-gray-500"
+                                                    onChange={brandHandel} />
                                                 <label className="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">{brand}</label>
                                             </div>
                                         </li>
